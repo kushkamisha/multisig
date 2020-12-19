@@ -1,22 +1,23 @@
-pragma solidity ^0.4.25;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
 
 
 contract MultiSig {
     uint256 public nonce;     // (only) mutable state
     address[] public owners;  // immutable state
 
-    constructor(address[] owners_) public {
+    constructor(address[] memory owners_) {
         owners = owners_;
     }
 
     event Recovered(address recovered);
 
     function transfer(
-        address destination,
+        address payable destination,
         uint256 value,
-        bytes32[] sigR,
-        bytes32[] sigS,
-        uint8[] sigV
+        bytes32[] memory sigR,
+        bytes32[] memory sigS,
+        uint8[] memory sigV
     )
         external
     {
@@ -35,7 +36,7 @@ contract MultiSig {
         destination.transfer(value);
     }
 
-    function () external payable {}
+    receive () external payable {}
 
     // Builds a prefixed hash to mimic the behavior of eth_sign.
     function prefixed(bytes32 hash) internal pure returns (bytes32) {

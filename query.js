@@ -6,7 +6,7 @@ module.exports = async (callback) => {
   const contractAddr = contract.address;
   const destination = '0x909Ae0dDf1ACaA3ccf32344922AE016Ab2558cBa';
   const value = web3.utils.toWei('0.01', 'ether');
-  const nonce = (await contract.nonce()).toString(); // MultiSig.nonce
+  const nonce = (await contract.nonce()).toString();
 
   console.log({ contractAddr, destination, value, nonce });
 
