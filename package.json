@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "truffle deploy && npm run exec",
-    "exec": "truffle exec query.js"
+    "query": "truffle exec query.js",
+    "deploy": "rm -rf build && npx truffle deploy"
   },
   "keywords": [],
   "author": "Misha Kushka <kushkamisha@yahoo.com>",

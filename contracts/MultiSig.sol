@@ -12,9 +12,10 @@ contract MultiSig {
 
     event Recovered(address recovered);
 
-    function transfer(
+    function execute(
         address payable destination,
         uint256 value,
+        bytes memory data,
         bytes32[] memory sigR,
         bytes32[] memory sigS,
         uint8[] memory sigV
@@ -22,7 +23,7 @@ contract MultiSig {
         external
     {
         bytes32 hash = prefixed(keccak256(abi.encodePacked(
-            address(this), destination, value, nonce
+            address(this), destination, value, data, nonce
         )));
 
         for (uint256 i = 0; i < owners.length; i++) {
@@ -33,7 +34,9 @@ contract MultiSig {
 
         // If we make it here, all signatures are accounted for.
         nonce += 1;
-        destination.transfer(value);
+        // destination.transfer(value);
+        (bool success,) = destination.call{ value: value }(data);
+        require(success);
     }
 
     receive () external payable {}
