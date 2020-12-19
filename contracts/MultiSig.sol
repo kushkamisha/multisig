@@ -9,7 +9,7 @@ contract MultiSig {
         owners = owners_;
     }
 
-    event Recovered(address);
+    event Recovered(address recovered);
 
     function transfer(
         address destination,
