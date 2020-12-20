@@ -32,23 +32,11 @@ const getTokenInstance = (contractAddr) => {
   return new web3.eth.Contract(abi, contractAddr);
 }
 
-const getEncodedTransfer = ({ instance, to, value }) => {
-  return instance.methods.transfer(to, value).encodeABI();
+const getEncodedTransfer = ({ instance, sender, recipient, amount }) => {
+  return instance.methods.transferFrom(sender, recipient, amount).encodeABI();
 }
 
 const signAndSendTransfer = async ({ data, from, to, prKey }) => {
-  const tx = {
-    // this could be provider.addresses[0] if it exists
-    from,
-    // target address, this could be a smart contract address
-    to,
-    // optional if you want to specify the gas limit 
-    // gas: gasLimit,
-    // optional if you are invoking say a payable function 
-    // value: value,
-    // this encodes the ABI of the method and the arguements
-    data
-  };
   const signedTx = await web3.eth.accounts.signTransaction({ from, to, data, gas: 100000 }, prKey);
   const sentTx = await web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
   console.log({ sentTx });
