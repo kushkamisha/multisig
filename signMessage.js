@@ -32,21 +32,13 @@ const getTokenInstance = (contractAddr) => {
   return new web3.eth.Contract(abi, contractAddr);
 }
 
-const getEncodedTransfer = ({ instance, sender, recipient, amount }) => {
+const getEncodedTransferFrom = ({ instance, sender, recipient, amount }) => {
   return instance.methods.transferFrom(sender, recipient, amount).encodeABI();
-}
-
-const signAndSendTransfer = async ({ data, from, to, prKey }) => {
-  const signedTx = await web3.eth.accounts.signTransaction({ from, to, data, gas: 100000 }, prKey);
-  const sentTx = await web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
-  console.log({ sentTx });
 }
 
 module.exports = {
   sign,
   recover,
   getTokenInstance,
-  getEncodedTransfer,
-  signAndSendTransfer,
-  web3,
+  getEncodedTransferFrom,
 };
