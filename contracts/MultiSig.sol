@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.7.5;
 
-
 contract MultiSig {
     uint256 public nonce;
-    address[] public owners;
+    uint256 public immutable threshold;
+    address[] public owners; // immutable
 
-    constructor(address[] memory owners_) {
+    constructor(address[] memory owners_, uint256 threshold_) {
+        require(threshold_ <= owners_.length && threshold_ > 0, "Invalid threshold");
+        threshold = threshold_;
         owners = owners_;
     }
-
-    event Recovered(address recovered);
 
     function execute(
         address payable destination,
@@ -28,13 +28,11 @@ contract MultiSig {
 
         for (uint256 i = 0; i < owners.length; i++) {
             address recovered = ecrecover(hash, sigV[i], sigR[i], sigS[i]);
-            emit Recovered(recovered);
             require(recovered == owners[i], "Incorrect owner address");
         }
 
-        // If we make it here, all signatures are accounted for.
+        // We are allowed to make a transaction
         nonce += 1;
-        // destination.transfer(value);
         (bool success,) = destination.call{ value: value }(data);
         require(success);
     }
