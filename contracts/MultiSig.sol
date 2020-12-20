@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.5;
 
 
 contract MultiSig {
-    uint256 public nonce;     // (only) mutable state
-    address[] public owners;  // immutable state
+    uint256 public nonce;
+    address[] public owners;
 
     constructor(address[] memory owners_) {
         owners = owners_;
