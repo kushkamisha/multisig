@@ -11,12 +11,9 @@ module.exports = async (callback) => {
     const senderAddr = '0x7403ab40723898eCf2450467Ba620EF7B77A6961';
     const prKeyBuffers = [
       Buffer.from('deca899581d68b6b2ac88149e951afdd8f89666b95aa54a790c6d56d831ab718', 'hex'),
-    ];
-    // const prKeyBuffer = [
-    //   Buffer.from('deca899581d68b6b2ac88149e951afdd8f89666b95aa54a790c6d56d831ab718', 'hex'),
-    //   Buffer.from('24d52ea1a035de7a61fd0c706de4b095adca0c8193f1395140356b3df31b5b6a', 'hex'),
-    //   Buffer.from('5b07bae6366e7ca82f82989e9d18a5aeb6320234aa58a552a609677c95258278', 'hex'),
-    // ]
+      Buffer.from('24d52ea1a035de7a61fd0c706de4b095adca0c8193f1395140356b3df31b5b6a', 'hex'),
+      Buffer.from('5b07bae6366e7ca82f82989e9d18a5aeb6320234aa58a552a609677c95258278', 'hex'),
+    ]
     const value = 0; // web3.utils.toWei('0.01', 'ether');
     const tokenAmount = 10;
     const nonce = (await multisig.nonce()).toString();
