@@ -4,12 +4,16 @@ pragma solidity ^0.7.5;
 contract MultiSig {
     uint256 public nonce;
     uint256 public immutable threshold;
-    address[] public owners; // immutable
+    address[] public owners;
+    mapping (address => bool) public isOwner;
 
     constructor(address[] memory owners_, uint256 threshold_) {
         require(threshold_ <= owners_.length && threshold_ > 0, "Invalid threshold");
         threshold = threshold_;
         owners = owners_;
+        for (uint256 i = 0; i < owners_.length; i++) {
+            isOwner[owners_[i]] = true;
+        }
     }
 
     function execute(
@@ -19,16 +23,20 @@ contract MultiSig {
         bytes32[] memory sigR,
         bytes32[] memory sigS,
         uint8[] memory sigV
-    )
-        external
-    {
+    ) external {
+        require(
+            sigR.length >= threshold && sigR.length == sigS.length && sigR.length == sigV.length,
+            "Invalid number of message signers"
+        );
+
         bytes32 hash = prefixed(keccak256(abi.encodePacked(
             address(this), destination, value, data, nonce
         )));
 
-        for (uint256 i = 0; i < owners.length; i++) {
+        for (uint i = 0; i < threshold; i++) {
             address recovered = ecrecover(hash, sigV[i], sigR[i], sigS[i]);
-            require(recovered == owners[i], "Incorrect owner address");
+            require(recovered > address(0), "Incorrect address");
+            require(isOwner[recovered], "Address is not an owner");
         }
 
         // We are allowed to make a transaction
@@ -37,11 +45,10 @@ contract MultiSig {
         require(success);
     }
 
-    receive () external payable {}
+    receive() external payable {}
 
     // Builds a prefixed hash to mimic the behavior of eth_sign.
     function prefixed(bytes32 hash) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked(
-            "\x19Ethereum Signed Message:\n32", hash));
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
     }
 }
