@@ -3,7 +3,7 @@ const path = require('path');
 const Web3 = require('web3');
 const utils = require('ethereumjs-util');
 
-const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
 
 const prefixedHash = ({ contractAddr, destination, value, data, nonce }) => {
   const hash = web3.utils.soliditySha3(contractAddr, destination, value, data, nonce);

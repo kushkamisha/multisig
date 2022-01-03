@@ -7,17 +7,18 @@ module.exports = async (callback) => {
     const multisig = await MultiSig.deployed();
     const token = await BasicToken.deployed();
 
-    const destination = '0x909Ae0dDf1ACaA3ccf32344922AE016Ab2558cBa';
-    const senderAddr = '0x7403ab40723898eCf2450467Ba620EF7B77A6961';
+    const destination = '0xF0723672096c5dc5718aFB3530CBf951aAa9E4c7';
+    const senderAddr = '0xEc6751439B9cC8a13c61B7c73A4081eBc08be42a';
     const prKeyBuffers = [
       // Buffer.from('5b07bae6366e7ca82f82989e9d18a5aeb6320234aa58a552a609677c95258278', 'hex'),
-      Buffer.from('deca899581d68b6b2ac88149e951afdd8f89666b95aa54a790c6d56d831ab718', 'hex'),
-      Buffer.from('24d52ea1a035de7a61fd0c706de4b095adca0c8193f1395140356b3df31b5b6a', 'hex'),
+      Buffer.from('ed8fffe05cb4f0a411292ed8ccc1aa28404516e886bb46f1e3d79a4635cad3a2', 'hex'),
+      Buffer.from('10d4bd07a4c83afdf5c35090064d9df368fbc5e4409e3e2440bffccfaa056d4b', 'hex'),
       // Buffer.from('cb6888ad5120adf7b8bee06fc236f8cce90405a6a313fb3bc63dccb2c44ae1c0', 'hex'),
     ]
     const value = 0; // web3.utils.toWei('0.01', 'ether');
     const tokenAmount = 10;
     const nonce = (await multisig.nonce()).toString();
+    console.log({ nonce });
 
     const tokenInstance = getTokenInstance(token.address);
     const data = getEncodedTransferFrom({
@@ -45,9 +46,11 @@ module.exports = async (callback) => {
     }
 
     // Allow MultiSig to spend tokens using transferFrom
+    console.log(1);
     await tokenInstance.methods
       .approve(multisig.address, tokenAmount)
       .send({ from: senderAddr })
+    console.log(2);
 
     // await web3.eth.sendTransaction({ to: multisig.address, from: senderAddr, value });
 

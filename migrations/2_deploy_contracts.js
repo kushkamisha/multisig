@@ -3,7 +3,7 @@ const MultiSig = artifacts.require("MultiSig");
 
 module.exports = function (deployer) {
   deployer.deploy(BasicToken, 1000);
-  const owners = ["0x7403ab40723898eCf2450467Ba620EF7B77A6961", "0x909Ae0dDf1ACaA3ccf32344922AE016Ab2558cBa", "0x826C1Cd8bFCF524A555e0E749dC2C72f3d1d1B68"]
+  const owners = ["0xEc6751439B9cC8a13c61B7c73A4081eBc08be42a", "0xF0723672096c5dc5718aFB3530CBf951aAa9E4c7", "0x431C7C93533e5C88C9C499EF3c39D0BbE1A0A3C6"]
   const threshold = owners.length - 1;
   deployer.deploy(MultiSig, owners, threshold);
 };
