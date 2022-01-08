@@ -53,12 +53,12 @@ const getEncodedTransferFrom = (
   token: ERC20,
   sender: string,
   recipient: string,
-  amount: string
+  amount: BigNumber
 ) => {
   return token.interface.encodeFunctionData("transferFrom", [
     sender,
     recipient,
-    amount,
+    amount.toString(),
   ]); // todo: make sure is correct
 };
 

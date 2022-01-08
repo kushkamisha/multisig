@@ -1,17 +1,13 @@
 {
   "name": "simple-multisig",
-  "version": "1.0.0",
-  "description": "",
-  "main": "interact.js",
+  "version": "1.1.0",
+  "description": "Simple multisig wallet on Solidity that can perform ETH transactions or SC calls",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "npx truffle test",
-    "start": "truffle deploy && npm run exec",
-    "query": "truffle exec query.js",
-    "deploy": "rm -rf build && npx truffle deploy",
-    "ganache": "npx ganache-cli --mnemonic='cook false wrong track abuse file save clever since shock destroy idle'"
+    "test": "npx hardhat test",
+    "coverage": "npx hardhat coverage"
   },
   "keywords": [],
   "author": "Misha Kushka <kushkamisha@yahoo.com>",
@@ -19,10 +15,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^3.3.0",
     "ethereumjs-util": "^7.0.7",
-    "ganache-cli": "^6.12.2",
-    "hardhat": "^2.8.0",
-    "truffle": "^5.1.58",
-    "web3": "^1.3.0"
+    "hardhat": "^2.8.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",
