@@ -1,6 +1,6 @@
 import * as utils from "ethereumjs-util";
 import { ethers } from "hardhat";
-import { ERC20 } from "./typechain";
+import { ERC20 } from "./typechain-types";
 import { BNLike } from "ethereumjs-util";
 import { BigNumber } from "ethers";
 

@@ -2,7 +2,7 @@ import { getEncodedTransferFrom, sign } from "../signMessage";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BasicToken, MultiSig } from "../typechain";
+import { BasicToken, MultiSig } from "../typechain-types";
 
 describe("Multisig", () => {
   let multisig: MultiSig;
@@ -33,12 +33,12 @@ describe("Multisig", () => {
     prKeyBuffers = [prKeyStrToBuffer(prKey1), prKeyStrToBuffer(prKey2)];
     const owners = [owner.address, owner2.address];
     const threshold = owners.length;
-    multisig = await (
+    multisig = (await (
       await ethers.getContractFactory("MultiSig")
-    ).deploy(owners, threshold);
-    token = await (
+    ).deploy(owners, threshold)) as MultiSig;
+    token = (await (
       await ethers.getContractFactory("BasicToken")
-    ).deploy(toWei(100));
+    ).deploy(toWei(100))) as BasicToken;
   });
 
   it("should work with seding ETH", async () => {
