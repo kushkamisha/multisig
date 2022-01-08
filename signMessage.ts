@@ -1,39 +1,22 @@
-import fs from "fs";
-import path from "path";
-// import Web3 from "web3";
 import * as utils from "ethereumjs-util";
-import { Contract, Wallet } from "ethers";
 import { ethers } from "hardhat";
 import { ERC20 } from "./typechain";
-import { Interface } from "ethers/lib/utils";
 import { BNLike } from "ethereumjs-util";
-
-// const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+import { BigNumber } from "ethers";
 
 const prefixedHash = (
   contractAddr: string,
   destination: string,
   value: string,
   data: string,
-  nonce: string
+  nonce: BigNumber
 ): string => {
   const hash = ethers.utils.solidityKeccak256(
-    ["string", "string", "string", "string", "string"],
+    ["address", "address", "uint256", "bytes", "uint256"],
     [contractAddr, destination, value, data, nonce]
-  ); // todo: make sure is the same as `web3.utils.soliditySha3`
-  // const hash = web3.utils.soliditySha3(
-  //   contractAddr,
-  //   destination,
-  //   value,
-  //   data,
-  //   nonce
-  // ) as string;
-  // return web3.utils.soliditySha3(
-  //   "\x19Ethereum Signed Message:\n32",
-  //   hash
-  // ) as string;
+  );
   return ethers.utils.solidityKeccak256(
-    ["string", "string"],
+    ["string", "bytes"],
     ["\x19Ethereum Signed Message:\n32", hash]
   );
 };
@@ -49,8 +32,7 @@ const sign = async (
   destination: string,
   value: string,
   data: string,
-  nonce: string,
-  wallet: Wallet,
+  nonce: BigNumber,
   prKeyBuffer: Buffer
 ) => {
   // 66 byte string, which represents 32 bytes of data
@@ -58,15 +40,7 @@ const sign = async (
   hash = hash.slice(2, hash.length);
   const hashBuffer = Buffer.from(hash, "hex");
 
-  // 32 bytes of data in Uint8Array
-  // const messageHashBinary = ethers.utils.arrayify(hash);
-
-  // To sign the 32 bytes of data, make sure you pass in the data
-  // const signature = await wallet.signMessage(messageHashBinary);
-  // console.log({ signature });
-  // console.log({ utils });
   const { r, s, v } = utils.ecsign(hashBuffer, prKeyBuffer);
-  console.log({ r, s, v });
 
   return {
     r: "0x" + r.toString("hex"),
@@ -74,16 +48,6 @@ const sign = async (
     v,
   };
 };
-
-// const getTokenInstance = (contractAddr: string) => {
-//   const { abi } = JSON.parse(
-//     fs.readFileSync(
-//       path.join(__dirname, "build", "contracts", "BasicToken.json"),
-//       "utf8"
-//     )
-//   );
-//   return new ethers.utils.Interface(abi);
-// };
 
 const getEncodedTransferFrom = (
   token: ERC20,
@@ -98,4 +62,4 @@ const getEncodedTransferFrom = (
   ]); // todo: make sure is correct
 };
 
-export { sign, recover /*, getTokenInstance */, getEncodedTransferFrom };
+export { sign, recover, getEncodedTransferFrom };
