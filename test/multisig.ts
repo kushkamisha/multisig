@@ -1,4 +1,4 @@
-import { getEncodedTransferFrom, sign } from "../signMessage";
+import { getEncodedTransferFrom, hashIt, recover, sign } from "../signMessage";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -12,6 +12,7 @@ describe("Multisig", () => {
   let owner2: SignerWithAddress;
   let recipient: SignerWithAddress;
   let somebody: SignerWithAddress;
+  let owners: string[];
 
   const prKeyStrToBuffer = (prKey: string) =>
     Buffer.from(prKey.replace(/0x/g, ""), "hex");
@@ -31,7 +32,7 @@ describe("Multisig", () => {
     );
 
     prKeyBuffers = [prKeyStrToBuffer(prKey1), prKeyStrToBuffer(prKey2)];
-    const owners = [owner.address, owner2.address];
+    owners = [owner.address, owner2.address];
     const threshold = owners.length;
     multisig = (await (
       await ethers.getContractFactory("MultiSig")
@@ -50,16 +51,21 @@ describe("Multisig", () => {
     const ss = [];
     const vs = [];
     for (let i = 0; i < prKeyBuffers.length; i++) {
-      const { r, s, v } = await sign(
+      const hash = hashIt(
         multisig.address,
         recipient.address,
         value.toString(),
         data,
-        nonce,
-        prKeyBuffers[i]
+        nonce
       );
-      rs.push(r);
-      ss.push(s);
+      const { r, s, v } = await sign(hash, prKeyBuffers[i]);
+      // Check signature
+      expect(recover(hash, r, s, v).toLowerCase()).to.equal(
+        owners[i].toLowerCase()
+      );
+
+      rs.push(`0x${r.toString("hex")}`);
+      ss.push(`0x${s.toString("hex")}`);
       vs.push(v);
     }
 
@@ -82,27 +88,32 @@ describe("Multisig", () => {
     const value = 0;
     const tokenAmount = toWei(10);
     const nonce = await multisig.nonce();
-
     const data = getEncodedTransferFrom(
       token,
       owner.address,
       recipient.address,
       tokenAmount
     );
+
     const rs = [];
     const ss = [];
     const vs = [];
     for (let i = 0; i < prKeyBuffers.length; i++) {
-      const { r, s, v } = await sign(
+      const hash = hashIt(
         multisig.address,
         token.address,
         value.toString(),
         data,
-        nonce,
-        prKeyBuffers[i]
+        nonce
       );
-      rs.push(r);
-      ss.push(s);
+      const { r, s, v } = await sign(hash, prKeyBuffers[i]);
+      // Check signature
+      expect(recover(hash, r, s, v).toLowerCase()).to.equal(
+        owners[i].toLowerCase()
+      );
+
+      rs.push(`0x${r.toString("hex")}`);
+      ss.push(`0x${s.toString("hex")}`);
       vs.push(v);
     }
 

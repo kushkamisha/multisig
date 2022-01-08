@@ -27,26 +27,22 @@ const recover = (hashBuffer: Buffer, r: Buffer, s: Buffer, v: BNLike) => {
   return "0x" + utils.pubToAddress(pub).toString("hex");
 };
 
-const sign = async (
+const hashIt = (
   contractAddr: string,
   destination: string,
   value: string,
   data: string,
-  nonce: BigNumber,
-  prKeyBuffer: Buffer
+  nonce: BigNumber
 ) => {
   // 66 byte string, which represents 32 bytes of data
   let hash = prefixedHash(contractAddr, destination, value, data, nonce);
   hash = hash.slice(2, hash.length);
-  const hashBuffer = Buffer.from(hash, "hex");
+  return Buffer.from(hash, "hex");
+};
 
-  const { r, s, v } = utils.ecsign(hashBuffer, prKeyBuffer);
-
-  return {
-    r: "0x" + r.toString("hex"),
-    s: "0x" + s.toString("hex"),
-    v,
-  };
+const sign = async (hash: Buffer, prKey: Buffer) => {
+  const { r, s, v } = utils.ecsign(hash, prKey);
+  return { r, s, v };
 };
 
 const getEncodedTransferFrom = (
@@ -62,4 +58,4 @@ const getEncodedTransferFrom = (
   ]); // todo: make sure is correct
 };
 
-export { sign, recover, getEncodedTransferFrom };
+export { hashIt, sign, recover, getEncodedTransferFrom };
